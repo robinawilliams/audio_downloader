@@ -4,7 +4,7 @@ from mutagen.id3 import ID3, TIT2, TPE1
 import shutil
 
 # Prompt for filepath
-folder_path = input("Please enter a filepath to download files to ")
+folder_path = input("Please enter a filepath to download files to: ")
 # Ensure the destination folder exists; create it if not
 if not os.path.exists(folder_path):
     os.makedirs(folder_path)

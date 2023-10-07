@@ -4,17 +4,14 @@
 
 ## How to install this project
 
-1. Clone this repo. - 'git clone https://github.com/robinawilliams/youtube_audio.git'
-2. Install moviepy dependency - 'pip install moviepy'
+1. Clone this repo - git clone https://github.com/robinawilliams/youtube_audio.git
+2. Install dependencies - pip install mutagen pydub yt-dlp
 
 ## How to run this project
 
-1. Run the command - 'python conversion.py'
-2. Enter the mp4 file you want to clip from, e.g., test.mp4
-3. Provide the start and end timestamps (HH:MM:SS, MM:SS, or SS) for the portion you want to clip.
-4. Enter the name you want to save the gif as, e.g. puppies. 
-
-The outputs will be saved to output_gifs.  
+1. Add your URLs to the input.txt file. Each line is a separate URL
+2. Run the command - python run.py
+3. Provide the location you want to save the mp3s to
 
 ## Find a bug? 
 
