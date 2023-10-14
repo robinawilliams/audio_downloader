@@ -4,12 +4,12 @@
 
 ## How to install this project
 
-1. Clone this repo - git clone https://github.com/robinawilliams/youtube_audio.git
-2. Install dependencies - pip install mutagen pydub yt-dlp
+1. Clone this repo
+2. Install dependencies - pip install -r requirements.txt
 
 ## How to run this project
 
-1. Add your URLs to the input.txt file. Each line is a separate URL
+1. Add your URLs to the input.txt file. Each line is a separate URL.
 2. Run the command - python run.py
 3. Provide the location you want to save the mp3s to and hit enter
 
