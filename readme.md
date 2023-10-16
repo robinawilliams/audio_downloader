@@ -11,13 +11,18 @@ This tool is based off of Otavio Ehrenberger's tutorial <a href="https://www.fre
 ## How to run this project
 
 1. Add your URLs to the input.txt file. Each line is a separate URL.
-2. Run the command - `python run.py [command line arguments] /path/to/save/videos`
+2. Run the tool with the desired options.
 
-## Command Line Arguments
+<!-- MANPAGE: BEGIN EXCLUDED SECTION -->
+    python run.py [OPTIONS] /path/to/save/videos
 
-`folder_path` - Destination folder path to save files
-`-P`, `--prompt-user` - Prompt user for manual renaming
-`-S`, `--silent` - Silent mode, no user prompts
+<!-- MANPAGE: END EXCLUDED SECTION -->
+
+## General Options:
+    -h, --help                      Print this help text and exit
+    -folder_path                       Destination folder path to save files
+    -P, --prompt-user                    Prompt user for manual renaming
+    -S, --silent                    Silent mode, no user prompts    
 
 ## Find a bug?
 
