@@ -11,8 +11,13 @@ This tool is based off of Otavio Ehrenberger's tutorial <a href="https://www.fre
 ## How to run this project
 
 1. Add your URLs to the input.txt file. Each line is a separate URL.
-2. Run the command - python run.py
-3. Provide the location you want to save the mp3s to and hit enter
+2. Run the command - `python run.py [command line arguments] /path/to/save/videos`
+
+## Command Line Arguments
+
+`folder_path` - Destination folder path to save files
+`-P`, `--prompt-user` - Prompt user for manual renaming
+`-S`, `--silent` - Silent mode, no user prompts
 
 ## Find a bug?
 

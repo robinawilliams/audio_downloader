@@ -2,7 +2,8 @@ import os
 import shutil
 import re
 from mutagen.id3 import ID3, TIT2, TPE1
-import audio_module  # Import the module
+import audio_module
+import argparse  # Import the argparse library
 
 # Constants
 TERMS_TO_REMOVE = ['(Lyrics)', '(Official Audio)', '(Original Audio)', '(Explicit)', '(EXPLICIT)', '(Audio)',
@@ -43,19 +44,38 @@ def set_mp3_tags(folder_path):
                 audio.save()
                 print(f"Updated tags for {filename}: Artist - {artist}, Title - {title}")
             except (ValueError, IndexError):
-                print(f"Skipping {filename}: Filename does not match the expected format (artist - title)")
+                prompt_user = args.prompt_user
+                if prompt_user:
+                    new_name = input(f"Please enter a filename that matches the expected format (artist - title) for '{filename}': ")
+                    new_name = new_name.strip()
+                    new_name = os.path.join(folder_path, new_name + ".mp3")
+                    os.rename(file_path, new_name)
+                    artist, title = new_name.split(' - ', 1)
+                    audio = ID3(new_name)
+                    audio["TPE1"] = TPE1(encoding=3, text=artist)
+                    audio["TIT2"] = TIT2(encoding=3, text=title)
+                    audio.save()
+                    print(f"Updated tags for {new_name}: Artist - {artist}, Title - {title}")
+                else:
+                    print(f"Skipping {filename}: Filename does not match the expected format (artist - title)")
 
-def main():
-    folder_path = input("Please enter a filepath to download files to: ")
-    if not os.path.exists(folder_path):
-        os.makedirs(folder_path)
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Download and process audio files")
+    parser.add_argument("folder_path", help="Destination folder path to save files")
+    parser.add_argument("-P", "--prompt-user", action="store_true", help="Prompt user for manual renaming")
+    parser.add_argument("-S", "--silent", action="store_true", help="Silent mode, no user prompts")
+    args = parser.parse_args()
+
+    if not os.path.exists(args.folder_path):
+        os.makedirs(args.folder_path)
 
     # Download and process files
     input_file = "input.txt"
+
     with open(input_file, 'r') as file:
         for line in file:
             line = line.strip()
-            audio_module.download_audio(line)  # Call the download_audio function from the module
+            audio_module.download_audio(line)
 
     print("Processing complete.")
 
@@ -65,17 +85,14 @@ def main():
     for file in files:
         if file.endswith(".mp3"):
             source_file = os.path.join(source_folder, file)
-            destination_file = os.path.join(folder_path, file)
+            destination_file = os.path.join(args.folder_path, file)
             shutil.move(source_file, destination_file)
-            print(f"Moved {file} to {folder_path}")
+            print(f"Moved {file} to {args.folder_path}")
 
     print("All .mp3 files have been moved.")
 
     # Clean and rename files
-    clean_and_rename_files(folder_path, TERMS_TO_REMOVE)
+    clean_and_rename_files(args.folder_path, TERMS_TO_REMOVE)
 
     # Set MP3 tags
-    set_mp3_tags(folder_path)
-
-if __name__ == "__main__":
-    main()
+    set_mp3_tags(args.folder_path)
