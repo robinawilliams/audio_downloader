@@ -4,10 +4,7 @@ import re
 from mutagen.id3 import ID3, TIT2, TPE1
 import audio_module
 import argparse
-
-# Constants
-TERMS_TO_REMOVE = ['(Lyrics)', '(Official Audio)', '(Original Audio)', '(Explicit)', '(EXPLICIT)', '(Audio)',
-                   '(Official Lyric Video)', '(original mix)']
+import json  # Import the json module
 
 
 # Function to remove terms from a filename
@@ -15,6 +12,13 @@ def remove_terms(filename, terms):
     for term in terms:
         filename = filename.replace(' ' + term, "")
     return filename.strip()
+
+
+# Function to load terms to remove from a JSON file
+def load_terms_from_json(file_path):
+    with open(file_path, 'r') as json_file:
+        data = json.load(json_file)
+        return data.get('terms', [])
 
 
 # Function to clean and rename the files
@@ -72,6 +76,10 @@ if __name__ == "__main__":
     if not os.path.exists(args.folder_path):
         os.makedirs(args.folder_path)
 
+    # Load terms to remove from JSON file
+    terms_file = "terms.json"
+    terms_to_remove = load_terms_from_json(terms_file)
+
     # Download and process files
     input_file = "input.txt"
 
@@ -95,7 +103,7 @@ if __name__ == "__main__":
     print("All .mp3 files have been moved.")
 
     # Clean and rename files
-    clean_and_rename_files(args.folder_path, TERMS_TO_REMOVE)
+    clean_and_rename_files(args.folder_path, terms_to_remove)
 
     # Set MP3 tags
     set_mp3_tags(args.folder_path)

@@ -3,11 +3,13 @@ import glob  # directory operations
 import os  # interface to os-provided info on files
 from pydub import AudioSegment  # only audio operations
 
+
 def newest_mp3_filename():
     # lists all mp3s in local directory
     list_of_mp3s = glob.glob('./*.mp3')
     # returns mp3 with highest timestamp value
     return max(list_of_mp3s, key=os.path.getctime)
+
 
 def get_video_time_in_ms(video_timestamp):
     vt_split = video_timestamp.split(":")
@@ -21,6 +23,7 @@ def get_video_time_in_ms(video_timestamp):
         seconds = int(vt_split[1]) * 1000
     # time point in milliseconds
     return hours + minutes + seconds
+
 
 def get_trimmed(mp3_filename, initial, final=""):
     if (not mp3_filename):
@@ -37,6 +40,7 @@ def get_trimmed(mp3_filename, initial, final=""):
         return sound[t0:t1]  # t0 up to t1
     return sound[t0:]  # t0 up to the end
 
+
 # downloads yt_url to the same directory from which the script runs
 def download_audio(yt_url):
     ydl_opts = {
@@ -49,6 +53,3 @@ def download_audio(yt_url):
     }
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         ydl.download([yt_url])
-
-# example usage:
-# python ytauddown.py https://www.youtube.com/watch?v=8OAPLk20epo 9:51 14:04

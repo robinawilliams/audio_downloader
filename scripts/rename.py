@@ -1,19 +1,22 @@
 import os
 import re
+import json
 
 # Directory containing the files you want to rename
 folder_path = input("Enter your the file path with mp3 files to rename: ")
 
-# Constants
-TERMS_TO_REMOVE = ['(Lyrics)', '(Official Audio)', '(Original Audio)', '(Explicit)', '(EXPLICIT)', '(Audio)',
-                   '(Official Lyric Video)', '(original mix)']
 
-
-# Function to remove terms from a filename
 def remove_terms(filename, terms):
     for term in terms:
         filename = filename.replace(' ' + term, "")
     return filename.strip()
+
+
+# Function to load terms to remove from a JSON file
+def load_terms_from_json(file_path):
+    with open(file_path, 'r') as json_file:
+        data = json.load(json_file)
+        return data.get('terms', [])
 
 
 # Function to clean and rename the files
@@ -32,4 +35,8 @@ def clean_and_rename_files(folder_path, terms_to_remove):
             print(f'Renamed: {old_name} to {new_name}')
 
 
-clean_and_rename_files(folder_path, TERMS_TO_REMOVE)
+# Load terms to remove from JSON file
+terms_file = "../terms.json"
+terms_to_remove = load_terms_from_json(terms_file)
+
+clean_and_rename_files(folder_path, terms_to_remove)
