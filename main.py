@@ -1,20 +1,18 @@
-import subprocess
 import os
 import shutil
 import re
 from mutagen.id3 import ID3, TIT2, TPE1
+import audio_module  # Import the module
 
 # Constants
 TERMS_TO_REMOVE = ['(Lyrics)', '(Official Audio)', '(Original Audio)', '(Explicit)', '(EXPLICIT)', '(Audio)',
                    '(Official Lyric Video)', '(original mix)']
-
 
 # Function to remove terms from a filename
 def remove_terms(filename, terms):
     for term in terms:
         filename = filename.replace(' ' + term, "")
     return filename.strip()
-
 
 # Function to clean and rename the files
 def clean_and_rename_files(folder_path, terms_to_remove):
@@ -30,7 +28,6 @@ def clean_and_rename_files(folder_path, terms_to_remove):
             new_name = os.path.join(folder_path, new_name)
             os.rename(old_name, new_name)
             print(f'Renamed: {old_name} to {new_name}')
-
 
 # Function to set MP3 tags from the filename
 def set_mp3_tags(folder_path):
@@ -48,7 +45,6 @@ def set_mp3_tags(folder_path):
             except (ValueError, IndexError):
                 print(f"Skipping {filename}: Filename does not match the expected format (artist - title)")
 
-
 def main():
     folder_path = input("Please enter a filepath to download files to: ")
     if not os.path.exists(folder_path):
@@ -56,16 +52,10 @@ def main():
 
     # Download and process files
     input_file = "input.txt"
-    process_script = "audio.py"
-
     with open(input_file, 'r') as file:
         for line in file:
             line = line.strip()
-            command = ['python', process_script, line]
-            try:
-                subprocess.check_call(command)
-            except subprocess.CalledProcessError:
-                print(f"Error while processing: {line}")
+            audio_module.download_audio(line)  # Call the download_audio function from the module
 
     print("Processing complete.")
 
@@ -86,7 +76,6 @@ def main():
 
     # Set MP3 tags
     set_mp3_tags(folder_path)
-
 
 if __name__ == "__main__":
     main()
