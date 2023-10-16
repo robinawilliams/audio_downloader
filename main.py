@@ -5,14 +5,14 @@ import re
 from mutagen.id3 import ID3, TIT2, TPE1
 
 # Constants
-TERMS_TO_REMOVE = [' (Lyrics)', ' (Official Audio)', ' (Original Audio)', ' (Explicit)', ' (EXPLICIT)', ' (Audio)',
-                   ' (Official Lyric Video)', ' (original mix)']
+TERMS_TO_REMOVE = ['(Lyrics)', '(Official Audio)', '(Original Audio)', '(Explicit)', '(EXPLICIT)', '(Audio)',
+                   '(Official Lyric Video)', '(original mix)']
 
 
 # Function to remove terms from a filename
 def remove_terms(filename, terms):
     for term in terms:
-        filename = filename.replace(term, "")
+        filename = filename.replace(' ' + term, "")
     return filename.strip()
 
 
@@ -30,6 +30,7 @@ def clean_and_rename_files(folder_path, terms_to_remove):
             new_name = os.path.join(folder_path, new_name)
             os.rename(old_name, new_name)
             print(f'Renamed: {old_name} to {new_name}')
+
 
 # Function to set MP3 tags from the filename
 def set_mp3_tags(folder_path):
