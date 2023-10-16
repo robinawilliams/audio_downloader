@@ -3,7 +3,7 @@ import shutil
 import re
 from mutagen.id3 import ID3, TIT2, TPE1
 import audio_module
-import argparse  # Import the argparse library
+import argparse
 
 # Constants
 TERMS_TO_REMOVE = ['(Lyrics)', '(Official Audio)', '(Original Audio)', '(Explicit)', '(EXPLICIT)', '(Audio)',
@@ -44,8 +44,7 @@ def set_mp3_tags(folder_path):
                 audio.save()
                 print(f"Updated tags for {filename}: Artist - {artist}, Title - {title}")
             except (ValueError, IndexError):
-                prompt_user = args.prompt_user
-                if prompt_user:
+                if not args.silent:
                     new_name = input(f"Please enter a filename that matches the expected format (artist - title) for '{filename}': ")
                     new_name = new_name.strip()
                     new_name = os.path.join(folder_path, new_name + ".mp3")
@@ -62,7 +61,6 @@ def set_mp3_tags(folder_path):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Download and process audio files")
     parser.add_argument("folder_path", help="Destination folder path to save files")
-    parser.add_argument("-P", "--prompt-user", action="store_true", help="Prompt user for manual renaming")
     parser.add_argument("-S", "--silent", action="store_true", help="Silent mode, no user prompts")
     args = parser.parse_args()
 
