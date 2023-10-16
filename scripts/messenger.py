@@ -1,7 +1,7 @@
 import subprocess
 
 input_file = "../input.txt"
-process_script = "audio.py"
+process_script = "../audio.py"
 
 with open(input_file, 'r') as file:
     for line in file:

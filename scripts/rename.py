@@ -5,11 +5,11 @@ import re
 folder_path = input("Enter your the file path with mp3 files to rename: ")
 
 # Regular expression pattern to match everything after the first '[' and any trailing spaces
-pattern = r' \[.*'
+pattern = r' \[(.*?)\]'
 
 # List of terms to remove
 terms_to_remove = [' (Lyrics)', ' (Official Audio)', ' (Original Audio)', ' (Explicit)', ' (EXPLICIT)', ' (Audio)',
-                   '(Official Lyric Video)', ' (original mix)']
+                   ' (Official Lyric Video)', ' (original mix)']
 
 
 # Function to remove terms from a filename

@@ -18,7 +18,7 @@ def remove_terms(filename, terms):
 
 # Function to clean and rename the files
 def clean_and_rename_files(folder_path, terms_to_remove):
-    pattern = r' \[.*'
+    pattern = r' \[(.*?)\]'
     for file in os.listdir(folder_path):
         old_name = os.path.join(folder_path, file)
         if os.path.isfile(old_name) and file.lower().endswith(".mp3"):
@@ -30,7 +30,6 @@ def clean_and_rename_files(folder_path, terms_to_remove):
             new_name = os.path.join(folder_path, new_name)
             os.rename(old_name, new_name)
             print(f'Renamed: {old_name} to {new_name}')
-
 
 # Function to set MP3 tags from the filename
 def set_mp3_tags(folder_path):
