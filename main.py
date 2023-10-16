@@ -9,11 +9,13 @@ import argparse
 TERMS_TO_REMOVE = ['(Lyrics)', '(Official Audio)', '(Original Audio)', '(Explicit)', '(EXPLICIT)', '(Audio)',
                    '(Official Lyric Video)', '(original mix)']
 
+
 # Function to remove terms from a filename
 def remove_terms(filename, terms):
     for term in terms:
         filename = filename.replace(' ' + term, "")
     return filename.strip()
+
 
 # Function to clean and rename the files
 def clean_and_rename_files(folder_path, terms_to_remove):
@@ -30,6 +32,7 @@ def clean_and_rename_files(folder_path, terms_to_remove):
             os.rename(old_name, new_name)
             print(f'Renamed: {old_name} to {new_name}')
 
+
 # Function to set MP3 tags from the filename
 def set_mp3_tags(folder_path):
     for filename in os.listdir(folder_path):
@@ -45,7 +48,8 @@ def set_mp3_tags(folder_path):
                 print(f"Updated tags for {filename}: Artist - {artist}, Title - {title}")
             except (ValueError, IndexError):
                 if not args.silent:
-                    new_name = input(f"Please enter a filename that matches the expected format (artist - title) for '{filename}': ")
+                    new_name = input(
+                        f"Please enter a filename that matches the expected format (artist - title) for '{filename}': ")
                     new_name = new_name.strip()
                     new_name = os.path.join(folder_path, new_name + ".mp3")
                     os.rename(file_path, new_name)
@@ -57,6 +61,7 @@ def set_mp3_tags(folder_path):
                     print(f"Updated tags for {new_name}: Artist - {artist}, Title - {title}")
                 else:
                     print(f"Skipping {filename}: Filename does not match the expected format (artist - title)")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Download and process audio files")
