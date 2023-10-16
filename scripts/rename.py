@@ -2,15 +2,14 @@ import os
 import re
 
 # Directory containing the files you want to rename
-folder_path = input("Enter the filepath for the folder you want: ")
+folder_path = input("Enter your the file path with mp3 files to rename: ")
 
 # Regular expression pattern to match everything after the first '[' and any trailing spaces
 pattern = r' \[.*'
 
 # List of terms to remove
-terms_to_remove = [' (Lyrics)', ' (Official Audio)', ' (Explicit)', ' (EXPLICIT)', ' (Audio)',
-                   ' (Official Lyric Video)', ' (original mix)'
-                   ]
+terms_to_remove = [' (Lyrics)', ' (Official Audio)', ' (Original Audio)', ' (Explicit)', ' (EXPLICIT)', ' (Audio)',
+                   '(Official Lyric Video)', ' (original mix)']
 
 
 # Function to remove terms from a filename
@@ -26,8 +25,8 @@ files = os.listdir(folder_path)
 for file in files:
     old_name = os.path.join(folder_path, file)
 
-    # Check if the file is a regular file (not a directory)
-    if os.path.isfile(old_name):
+    # Check if the file is a regular file (not a directory) and if it has an ".mp3" extension
+    if os.path.isfile(old_name) and file.lower().endswith(".mp3"):
         # Use a regular expression to remove everything after the first '[' and trailing spaces
         new_name = re.sub(pattern, '', file)
 
