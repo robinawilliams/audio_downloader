@@ -1,11 +1,16 @@
 {
     "terms": [
         "(Lyrics)",
+        "(lyrics)",
+        "| Lyrics",
         "(Official Audio)",
         "(Original Audio)",
+        "(Original Video)",
+        "[OFFICIAL VIDEO]",
         "(Explicit)",
         "(EXPLICIT)",
         "(Audio)",
+        "(HQ Audio)",
         "(Official Lyric Video)",
         "(original mix)"
     ]

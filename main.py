@@ -4,15 +4,13 @@ import re
 from mutagen.id3 import ID3, TIT2, TPE1
 import audio_module
 import argparse
-import json  # Import the json module
-
+import json
 
 # Function to remove terms from a filename
 def remove_terms(filename, terms):
     for term in terms:
-        filename = filename.replace(' ' + term, "")
+        filename = filename.replace(f' {term}', "")
     return filename.strip()
-
 
 # Function to load terms to remove from a JSON file
 def load_terms_from_json(file_path):
@@ -20,40 +18,39 @@ def load_terms_from_json(file_path):
         data = json.load(json_file)
         return data.get('terms', [])
 
-
 # Function to clean and rename the files
 def clean_and_rename_files(folder_path, terms_to_remove):
     pattern = r' \[(.*?)\]'
-    for file in os.listdir(folder_path):
-        old_name = os.path.join(folder_path, file)
-        if os.path.isfile(old_name) and file.lower().endswith(".mp3"):
-            new_name = re.sub(pattern, '', file)
+    for file_name in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, file_name)
+        if os.path.isfile(file_path) and os.path.splitext(file_name)[1].lower() == ".mp3":
+            new_name = re.sub(pattern, '', file_name)
             new_name = remove_terms(new_name, terms_to_remove)
             new_name = re.sub(r'  ', ' ', new_name)
-            base, ext = os.path.splitext(new_name)
-            new_name = base + os.path.splitext(file)[1]
             new_name = os.path.join(folder_path, new_name)
-            os.rename(old_name, new_name)
-            print(f'Renamed: {old_name} to {new_name}')
-
+            try:
+                os.rename(file_path, new_name)
+                print(f'Renamed: {file_name} to {new_name}')
+            except Exception as e:
+                print(f"Error renaming {file_name}: {e}")
 
 # Function to set MP3 tags from the filename
-def set_mp3_tags(folder_path):
-    for filename in os.listdir(folder_path):
-        if filename.endswith(".mp3"):
-            file_path = os.path.join(folder_path, filename)
+def set_mp3_tags(folder_path, silent=False):
+    for file_name in os.listdir(folder_path):
+        file_path = os.path.join(folder_path, file_name)
+        if os.path.splitext(file_name)[1].lower() == ".mp3":
+            base_filename = os.path.splitext(file_name)[0]
             try:
-                base_filename = os.path.splitext(filename)[0]
                 artist, title = base_filename.split(' - ', 1)
                 audio = ID3(file_path)
                 audio["TPE1"] = TPE1(encoding=3, text=artist)
                 audio["TIT2"] = TIT2(encoding=3, text=title)
                 audio.save()
-                print(f"Updated tags for {filename}: Artist - {artist}, Title - {title}")
+                print(f"Updated tags for {file_name}: Artist - {artist}, Title - {title}")
             except (ValueError, IndexError):
-                if not args.silent:
+                if not silent:
                     new_name = input(
-                        f"Please enter a filename that matches the expected format (artist - title) for '{filename}': ")
+                        f"Please enter a filename that matches the expected format (artist - title) for '{file_name}': ")
                     new_name = new_name.strip()
                     new_name = os.path.join(folder_path, new_name + ".mp3")
                     os.rename(file_path, new_name)
@@ -64,8 +61,7 @@ def set_mp3_tags(folder_path):
                     audio.save()
                     print(f"Updated tags for {new_name}: Artist - {artist}, Title - {title}")
                 else:
-                    print(f"Skipping {filename}: Filename does not match the expected format (artist - title)")
-
+                    print(f"Skipping {file_name}: Filename does not match the expected format (artist - title)")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Download and process audio files")
@@ -90,20 +86,23 @@ if __name__ == "__main__":
 
     print("Processing complete.")
 
-    # Move .mp3 files
+    # Clean and rename files in the source folder
     source_folder = os.getcwd()
-    files = os.listdir(source_folder)
-    for file in files:
-        if file.endswith(".mp3"):
-            source_file = os.path.join(source_folder, file)
-            destination_file = os.path.join(args.folder_path, file)
-            shutil.move(source_file, destination_file)
-            print(f"Moved {file} to {args.folder_path}")
+    for file_name in os.listdir(source_folder):
+        file_path = os.path.join(source_folder, file_name)
+        if os.path.isfile(file_path) and os.path.splitext(file_name)[1].lower() == ".mp3":
+            clean_and_rename_files(source_folder, terms_to_remove)
+            set_mp3_tags(source_folder, args.silent)
+
+    # Move .mp3 files to the final output location
+    for file_name in os.listdir(source_folder):
+        if os.path.splitext(file_name)[1].lower() == ".mp3":
+            source_file = os.path.join(source_folder, file_name)
+            destination_file = os.path.join(args.folder_path, file_name)
+            try:
+                shutil.move(source_file, destination_file)
+                print(f"Moved {file_name} to {args.folder_path}")
+            except Exception as e:
+                print(f"Error moving {file_name}: {e}")
 
     print("All .mp3 files have been moved.")
-
-    # Clean and rename files
-    clean_and_rename_files(args.folder_path, terms_to_remove)
-
-    # Set MP3 tags
-    set_mp3_tags(args.folder_path)
