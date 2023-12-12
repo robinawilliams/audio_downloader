@@ -13,7 +13,7 @@ def newest_mp3_filename():
 
 def get_video_time_in_ms(video_timestamp):
     vt_split = video_timestamp.split(":")
-    if (len(vt_split) == 3):  # if in HH:MM:SS format
+    if len(vt_split) == 3:  # if in HH:MM:SS format
         hours = int(vt_split[0]) * 60 * 60 * 1000
         minutes = int(vt_split[1]) * 60 * 1000
         seconds = int(vt_split[2]) * 1000
@@ -26,7 +26,7 @@ def get_video_time_in_ms(video_timestamp):
 
 
 def get_trimmed(mp3_filename, initial, final=""):
-    if (not mp3_filename):
+    if not mp3_filename:
         # raise an error to immediately halt program execution
         raise Exception("No MP3 found in local directory.")
     # reads mp3 as a PyDub object
@@ -34,7 +34,7 @@ def get_trimmed(mp3_filename, initial, final=""):
     t0 = get_video_time_in_ms(initial)
     print("Beginning trimming process for file ", mp3_filename, ".\n")
     print("Starting from ", initial, "...")
-    if (len(final) > 0):
+    if len(final) > 0:
         print("...up to ", final, ".\n")
         t1 = get_video_time_in_ms(final)
         return sound[t0:t1]  # t0 up to t1
