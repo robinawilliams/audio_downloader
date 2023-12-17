@@ -2,17 +2,18 @@ import os
 import shutil
 import re
 from mutagen.id3 import ID3, TIT2, TPE1
-import audio_module
+import audio_module  # Core logic
 import argparse
 import json
+import hashlib
 import logging
 
-# Configure logging
+# Configure logging to record events and errors in a log file
 logging.basicConfig(filename='audio_processing.log', level=logging.INFO,
                     format='%(asctime)s [%(levelname)s]: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
 
-# Function to remove terms from a filename
+# Function to remove specified terms from a filename
 def remove_terms(filename, terms):
     for term in terms:
         filename = filename.replace(f' {term}', "")
@@ -30,7 +31,7 @@ def load_terms_from_json(file_path):
         return []
 
 
-# Function to clean and rename the files
+# Function to clean and rename files in a given folder
 def clean_and_rename_files(folder_path, terms_to_remove):
     pattern = r' \[(.*?)\]'
     try:
@@ -65,8 +66,9 @@ def set_mp3_tags(folder_path, silent=False):
                     audio.save()
                     logging.info(f"Updated tags for {file_name}: Artist: {artist}, Title: {title}")
                 except (ValueError, IndexError) as ve:
-                    # Check if the filename matches the artist - title.mp3 pattern
+                    # Handle cases where filename doesn't match the artist - title.mp3 format
                     if not silent:
+                        # User input to correct the format
                         logging.error(f"Error processing tags for {file_name}: {ve}")
                         new_name = input(
                             f"Please enter a filename that matches the "
@@ -93,12 +95,23 @@ def set_mp3_tags(folder_path, silent=False):
         logging.error(f"Error setting MP3 tags: {e}")
 
 
+# Function to calculate file hash
+def filehash(filepath):
+    hasher = hashlib.md5()
+    with open(filepath, 'rb') as file:
+        for chunk in iter(lambda: file.read(4096), b''):
+            hasher.update(chunk)
+    return hasher.hexdigest()
+
+
 if __name__ == "__main__":
+    # Parse command line arguments
     parser = argparse.ArgumentParser(description="Download and process audio files")
     parser.add_argument("folder_path", help="Destination folder path to save files")
     parser.add_argument("-S", "--silent", action="store_true", help="Silent mode, no user prompts")
     args = parser.parse_args()
 
+    # Check if the specified folder exists, create it if not
     if not os.path.exists(args.folder_path):
         try:
             os.makedirs(args.folder_path)
@@ -110,7 +123,7 @@ if __name__ == "__main__":
     terms_file = "terms.json"
     terms_to_remove = load_terms_from_json(terms_file)
 
-    # Download and process files
+    # Download and process files based on input file
     input_file = "input.txt"
     processed_lines = []
 
@@ -151,10 +164,28 @@ if __name__ == "__main__":
                     source_file = os.path.join(source_folder, file_name)
                     destination_file = os.path.join(args.folder_path, file_name)
                     try:
-                        shutil.move(source_file, destination_file)
-                        logging.info(f"Moved {file_name} to {args.folder_path}")
+                        # Check if the source and destination are on the same file system
+                        if os.stat(source_file).st_dev == os.stat(args.folder_path).st_dev:
+                            shutil.move(source_file, destination_file)
+                        else:
+                            shutil.copy(source_file, destination_file)
+
+                            # Verify that the source and destination files are the same using hash check
+                            if filehash(source_file) == filehash(destination_file):
+                                os.remove(source_file)
+                                logging.info(f"Primary activated. Moved {file_name} to {args.folder_path}")
+                            else:
+                                logging.warning(f"Hash mismatch for {file_name}. Keeping both files.")
+
                     except Exception as e:
                         logging.error(f"Error moving {file_name}: {e}")
+
+                        # Verify that the source and destination files are the same using hash check
+                        if filehash(source_file) == filehash(destination_file):
+                            os.remove(source_file)
+                            logging.info(f"Fallback activated. Moved {file_name} to {args.folder_path}")
+                        else:
+                            logging.warning(f"Hash mismatch for {file_name}. Keeping both files.")
 
         except Exception as e:
             logging.error(f"Error processing files in the source folder: {e}")
