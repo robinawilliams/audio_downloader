@@ -1,7 +1,7 @@
-# youtube_audio
+# audio_downloader
 
-## A python tool to automatically download the audio of a YouTube* video and set its mp3 tags. 
-This tool is based off of Otavio Ehrenberger's tutorial <a href="https://www.freecodecamp.org/news/download-trim-mp3-from-youtube-with-python/">"How to Download and Trim MP3s from YouTube with Python"</a> on Free Code camp. It uses <a href="https://github.com/yt-dlp/yt-dlp">yt-dlp</a> instead of <a href="https://github.com/ytdl-org/youtube-dl">youtube-dl</a> among other changes. *It works on any site that yt-dlp would.
+## A python tool to automatically download the audio of a video and set its mp3 tags. 
+This tool is based off of Otavio Ehrenberger's tutorial <a href="https://www.freecodecamp.org/news/download-trim-mp3-from-youtube-with-python/">"How to Download and Trim MP3s from YouTube with Python"</a> on Free Code camp. It uses <a href="https://github.com/yt-dlp/yt-dlp">yt-dlp</a> instead of <a href="https://github.com/ytdl-org/youtube-dl">youtube-dl</a> among other changes. It works on any site that yt-dlp would.
 
 ## How to install this project
 
